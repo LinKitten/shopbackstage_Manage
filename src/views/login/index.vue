@@ -1,34 +1,87 @@
 <template>
   <div class="login-container">
-    <el-form :model="form" class="login-form">
+    <el-form ref="formRef" :rules="rules" :model="form" class="login-form">
       <div class="title-container">
         <h3 class="title">RageSnailShop·管理员登录</h3>
       </div>
-      <el-form-item>
-        <el-icon :size="20" class="svg-container">
-          <edit />
-        </el-icon>
+      <el-form-item prop="userName">
+        <svg-icon icon="user" class="svg-container"></svg-icon>
         <el-input v-model="form.userName" placeholder="请输入用户名..." />
       </el-form-item>
-      <el-form-item>
-        <el-icon :size="20" class="svg-container">
-          <edit />
-        </el-icon>
-        <el-input v-model="form.password" type="password" placeholder="请输入密码..." />
+      <el-form-item prop="password">
+        <svg-icon icon="password" class="svg-container"></svg-icon>
+        <el-input
+          v-model="form.password"
+          type="password"
+          placeholder="请输入密码..."
+        />
       </el-form-item>
-      <el-button type="primary" class="login-button">登录</el-button>
+      <el-button type="primary" class="login-button" @click="handleLogin"
+        >登录</el-button
+      >
     </el-form>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { Edit } from "@element-plus/icons-vue";
+// import { Edit } from "@element-plus/icons-vue";
+// import axios from "axios";
+
+import { ElMessage } from "element-plus";
+import axiosUtil from "@/util/axios";
+import router from "@/router"
 
 const form = ref({
   userName: "",
   password: "",
 });
+// 定义校验规则
+const rules = ref({
+  userName: [
+    {
+      required: true,
+      message: "请输入用户名",
+      trigger: "blur",
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: "请输入密码",
+      trigger: "blur",
+    },
+  ],
+});
+
+const formRef = ref(null);
+const handleLogin = () => {
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      // console.log("验证成功");
+      // axios.post("http://localhost:8080/adminLogin",form.value)
+      //   .then(response =>{
+      //     console.log(response.data);
+      //   }).catch(error=>{
+      //     ElMessage.error("系统运行出错，请联系管理员")
+      //   })
+      try {
+        let result = await axiosUtil.post("adminLogin", form.value);
+        let data = result.data;
+        if (data.code == 0) {
+          ElMessage.success("登录成功");
+          window.sessionStorage.setItem("token", data.token);
+          router.replace("/") //跳转
+        } else {
+          ElMessage.error(data.msg);
+        }
+      } catch (error) {
+        console.log("error:" + err);
+        ElMessage.error("服务器出错，请联系管理员");
+      }
+    }
+  });
+};
 </script>
 
 
@@ -53,7 +106,7 @@ $cursor: #fff;
     margin: 0 auto;
     overflow: hidden;
 
-    ::v-deep(.el-form-item ){
+    ::v-deep(.el-form-item) {
       border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(0, 0, 0, 0.1);
       border-radius: 5px;
@@ -119,7 +172,7 @@ $cursor: #fff;
   .title-container {
     position: relative;
 
- .title {
+    .title {
       font-size: 26px;
       color: $light_gray;
       margin: 0px auto 40px auto;

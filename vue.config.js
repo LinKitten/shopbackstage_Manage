@@ -1,17 +1,27 @@
 const { defineConfig } = require('@vue/cli-service')
 
-const webpack = require('webpack')
+
 
 const path = require("path")
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
-
+const webpack = require('webpack')
 
 module.exports = defineConfig({
   transpileDependencies: true,
 
   lintOnSave: false,
+
+  configureWebpack: {
+    resolve: {
+      alias: {
+        '@': resolve('src')
+      }
+    }
+  },
+
+
   chainWebpack(config) {
     // 设置 svg-sprite-loader
     // config 为 webpack 配置对象
@@ -59,5 +69,8 @@ module.exports = defineConfig({
         symbolId: 'icon-[name]'
       })
       .end()
-  }
+  },
+
+  // configureWebpack
+
 })

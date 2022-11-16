@@ -16,6 +16,11 @@ const routes = [
         path: '/bigType',
         name: '商品大类',
         component: () => import( '../views/bigType/index.vue')
+      },
+      {
+        path: '/user',
+        name: '商品大类',
+        component: () => import( '../views/user/index.vue')
       }
     ]
   },

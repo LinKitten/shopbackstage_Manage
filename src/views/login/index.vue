@@ -71,6 +71,10 @@ const handleLogin = () => {
         if (data.code == 0) {
           ElMessage.success("登录成功");
           window.sessionStorage.setItem("token", data.token);
+
+          // 存储用户名密码到缓存，可用于修改密码
+          window.sessionStorage.setItem("userInfo",JSON.stringify(form.value))
+
           router.replace("/") //跳转
         } else {
           ElMessage.error(data.msg);

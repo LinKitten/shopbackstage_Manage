@@ -19,8 +19,13 @@ const routes = [
       },
       {
         path: '/user',
-        name: '商品大类',
+        name: '用户管理',
         component: () => import( '../views/user/index.vue')
+      },
+      {
+        path: '/modifyPassword',
+        name: '修改密码',
+        component: () => import( '../views/modifyPassword/index.vue')
       }
     ]
   },

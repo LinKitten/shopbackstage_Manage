@@ -27,6 +27,12 @@ const routes = [
         name: '修改密码',
         component: () => import( '../views/modifyPassword/index.vue')
       }
+      ,
+      {
+        path: '/order',
+        name: '订单管理',
+        component: () => import( '../views/order/index.vue')
+      }
     ]
   },
   {

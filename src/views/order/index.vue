@@ -18,9 +18,9 @@
       <el-table-column prop="address" label="收货地址" width="400" />
       <el-table-column prop="action" label="操作" width="300" fixed="right">
         <template v-slot="scope">
-          <el-button type="success">详情</el-button>
+          <el-button type="success" @click="handleDialogValue(scope.row.id)">详情</el-button>
           <el-button type="primary" @click="handlerOrderStatus(scope.row.id, 2)">发货</el-button>
-          <el-button type="primary" @click="handlerDeleteStatus(scope.row.id, 3)">退货</el-button>
+          <el-button type="primary" @click="handlerOrderStatus(scope.row.id, 3)">退货</el-button>
           <el-button type="danger" :icon="Delete" @click="handleDelete(scope.row.id)"> </el-button>
         </template>
       </el-table-column>
@@ -29,6 +29,7 @@
       :page-sizes="[10, 20, 30, 40, 50]" layout="total, sizes, prev, pager, next, jumper" :total="total"
       @size-change="handleSizeChange" @current-change="handleCurrentChange" />
   </el-card>
+  <Dialog v-model="dialogVisible" :id="id"></Dialog>
 </template>
 
 <script setup>
@@ -36,6 +37,7 @@ import { Search, Delete } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { ref } from "vue";
 import axios from "@/util/axios";
+import Dialog from "./components/dialog.vue"
 const queryForm = ref({
   query: "",
   pageNum: 1,
@@ -43,6 +45,7 @@ const queryForm = ref({
 });
 const total = ref(0);
 const tableData = ref([]);
+const id=ref(-1);
 
 const initUserList = async () => {
   const res = await axios.post("admin/order/list", queryForm.value);
@@ -50,6 +53,16 @@ const initUserList = async () => {
   total.value = res.data.total;
 };
 initUserList();
+
+//用于是否显示dialog
+const dialogVisible = ref(false)
+
+const handleDialogValue = (orderId)=>{
+  id.value=orderId;
+  dialogVisible.value = true;
+
+}
+
 
 const handleSizeChange = (pageSize) => {
   queryForm.value.pageNum = 1;
@@ -87,15 +100,16 @@ const handlerOrderStatus = (id, status) => {
       cancelButtonText: '取消',
       type: 'warning',
     },
-    initUserList() //刷新
+    
   )
     .then(async () => {
-      let res = await axios.post('/admin/order/updateStatus', { id: id, status: status })
+      let res = await axios.post('admin/order/updateStatus', { id: id, status: status })
       if (res.data.code == 0) {
         ElMessage({
           type: 'success',
           message: '执行成功',
         })
+        initUserList() //刷新
       } else {
         ElMessage({
           type: 'error',

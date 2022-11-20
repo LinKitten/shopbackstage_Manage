@@ -80,7 +80,7 @@ const handleLogin = () => {
           ElMessage.error(data.msg);
         }
       } catch (error) {
-        console.log("error:" + err);
+        console.log("error:" + error);
         ElMessage.error("服务器出错，请联系管理员");
       }
     }

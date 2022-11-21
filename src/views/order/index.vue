@@ -2,7 +2,7 @@
   <el-card>
     <el-row :gutter="20" class="header">
       <el-col :span="7">
-        <el-input placeholder="请输入订单号..." clearable v-v-model="queryForm.query"></el-input>
+        <el-input placeholder="请输入订单号..." clearable v-model="queryForm.query"></el-input>
       </el-col>
       <el-button type="button" :icon="Search" @click="initUserList">搜索</el-button>
     </el-row>

@@ -93,7 +93,6 @@ watch(
       initFormData(id);
     } else {
       //重置
-      formRef.value.resetFields();
       form.value = {
         id: -1,
         name: "",

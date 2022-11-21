@@ -6,11 +6,16 @@
     @close="handleClose"
     center
   >
-    <el-form ref="formRef" :model="form" label-width="100px" style="text-align:center;">
+    <el-form
+      ref="formRef"
+      :model="form"
+      label-width="100px"
+      style="text-align: center"
+    >
       <el-upload
-      :headers="headers"
+        :headers="headers"
         class="avatar-uploader"
-        :action="getServerUrl()+'admin/bigType/uploadImage'"
+        :action="getServerUrl() + 'admin/bigType/uploadImage'"
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
         :before-upload="beforeAvatarUpload"
@@ -23,56 +28,53 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button type="primary" @click="handleConfirm"
-          >确认更换图片</el-button
-        >
+        <el-button type="primary" @click="handleConfirm">确认更换图片</el-button>
       </span>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import axios,{ getServerUrl } from "@/util/axios";
+import axios, { getServerUrl } from "@/util/axios";
 import { defineEmits, defineProps, watch, ref } from "vue";
 import { ElMessage } from "element-plus";
-import { Plus } from '@element-plus/icons-vue'
-
+import { Plus } from "@element-plus/icons-vue";
 
 const tableDate = ref([]);
 
 //接收父组件传过来的id
 const prop = defineProps({
-  imageDialogValue:{
+  imageDialogValue: {
     type: Object,
-    default: ()=>{},
+    default: () => {},
     requirted: true,
-  }
+  },
 });
 
 //获取token
 const headers = ref({
-  token:window.sessionStorage.getItem("token")
-})
-
+  token: window.sessionStorage.getItem("token"),
+});
 
 const form = ref({
   id: -1,
   image: "",
-
 });
 
 const formRef = ref(null);
-const imageUrl = ref('')
+const imageUrl = ref("");
 // 监听id的变化
 watch(
   () => prop.imageDialogValue, //监听的参数
   //监听的回调方法
   () => {
-   form.value = prop.imageDialogValue
-  //  让图片回显
-  imageUrl.value = getServerUrl()+"/image/bigType/"+form.value.image
+    form.value = prop.imageDialogValue;
+    //  让图片回显
+    imageUrl.value = getServerUrl() + "/image/bigType/" + form.value.image;
+    console.log("让图片回显:");
+    console.log(imageUrl.value);
   },
-  {deep:true,immediate:true}
+  { deep: true, immediate: true }
 );
 
 const emits = defineEmits(["update:modelValue", "initBigTypeList"]);
@@ -81,9 +83,26 @@ const handleClose = () => {
   emits("update:modelValue", false);
 };
 
-const handleConfirm = () => {
-  formRef.value.validate(async (valid) => {
-    if (valid) {
+//上传图片回显到dialog上
+const handleAvatarSuccess = (res) => {
+  imageUrl.value = getServerUrl() + res.data.src;
+  form.value.image = res.data.title; //更新form里面的image数据
+};
+
+const beforeAvatarUpload = (file) => {
+  const isJPG = file.type === "image/jpeg";
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isJPG) {
+    ElMessage.error("图片必须是jpg格式");
+  }
+  if (!isLt2M) {
+    ElMessage.error("图片大小不能超过2M!");
+  }
+  return isJPG && isLt2M;
+};
+
+const handleConfirm =async () => {
+
       let result = await axios.post("admin/bigType/save", form.value);
       let data = result.data;
       if (data.code == 0) {
@@ -94,11 +113,7 @@ const handleConfirm = () => {
       } else {
         ElMessage.error(data.msg);
       }
-    } else {
-      console.log("fail");
-      return false;
-    }
-  });
+    
 };
 </script>
 

@@ -32,7 +32,7 @@
       :page-sizes="[10, 20, 30, 40, 50]" layout="total, sizes, prev, pager, next, jumper" :total="total"
       @size-change="handleSizeChange" @current-change="handleCurrentChange" />
   </el-card>
-  <Dialog v-model="dialogVisible" :id="id" :dialogTitle="dialogTitle" @initBigTypeList="initBigTypeList"></Dialog>
+  <Dialog v-model="dialogVisible" :dialogVisible="dialogVisible" :id="id" :dialogTitle="dialogTitle" @initBigTypeList="initBigTypeList"></Dialog>
   <ImageDialog v-model="imageDialogVisible" :imageDialogValue="imageDialogValue" @initBigTypeList="initBigTypeList">
   </ImageDialog>
 </template>
@@ -50,6 +50,7 @@ const queryForm = ref({
   pageNum: 1, //当前页
   pageSize: 10, //每页大小
 });
+
 const total = ref(0); //默认总记录
 
 const tableData = ref([]);
@@ -69,6 +70,7 @@ const initBigTypeList = async () => {
   tableData.value = res.data.bigTypeList;
   total.value = res.data.total;
 };
+
 initBigTypeList();
 
 const handleSizeChange = (pageSize) => {
@@ -76,6 +78,7 @@ const handleSizeChange = (pageSize) => {
   queryForm.value.pageSize = pageSize;
   initBigTypeList();
 };
+
 const handleCurrentChange = (pageNum) => {
   queryForm.value.pageNum = pageNum;
   initBigTypeList();

@@ -44,7 +44,7 @@
                     </el-row>
                     <el-row :gutter="20" class="use">
                         <el-button type="primary" @click="handleSwiperDialogValue(scope.row)">幻灯设置</el-button>
-                        <el-button type="primary" :icon="Edit" @click="handleDialogValue(scope.row.id)">轮播图设置
+                        <el-button type="primary" :icon="Edit" @click="handleProductSwiperImageDialogValue(scope.row)">轮播图设置
                         </el-button>
                     </el-row>
                 </template>
@@ -58,6 +58,9 @@
         @initProductList="initProductList"></Dialog>
     <ImageDialog v-model="imageDialogVisible" :imageDialogValue="imageDialogValue" @initProductList="initProductList"></ImageDialog>
     <SwiperImageDialog v-model="swiperImageDialogVisible"  :imageDialogValue="imageDialogValue" @initProductList="initProductList"></SwiperImageDialog>
+
+    <ProductSwiperImageDialog v-model="productSwiperImageDialogVisible"  :imageDialogValue="imageDialogValue"></ProductSwiperImageDialog>
+
 </template>
   
 <script setup>
@@ -69,6 +72,7 @@ import Dialog from "./components/dialog.vue";
 
 import ImageDialog from "./components/imageDialog.vue";
 import SwiperImageDialog from "./components/swiperImageDialog.vue"
+import ProductSwiperImageDialog from "./components/productSwiperImageDialog.vue"
 
 
 const queryForm = ref({
@@ -94,6 +98,8 @@ const imageDialogVisible = ref(false);
 
 const swiperImageDialogVisible = ref(false);
 
+const productSwiperImageDialogVisible = ref(false);
+
 
 const initProductList = async () => {
     const res = await axios.post("admin/product/list", queryForm.value);
@@ -114,7 +120,11 @@ const handleSwiperDialogValue = (row) => {
     swiperImageDialogVisible.value = true;
     imageDialogValue.value = JSON.parse(JSON.stringify(row));
 };
-
+//更改产品轮播图片
+const handleProductSwiperImageDialogValue = (row) => {
+    productSwiperImageDialogVisible.value = true;
+    imageDialogValue.value = JSON.parse(JSON.stringify(row));
+};
 
 const handleDialogValue = (productId) => {
     if (productId) {

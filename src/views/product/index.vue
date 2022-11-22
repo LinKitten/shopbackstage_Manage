@@ -38,7 +38,7 @@
             <el-table-column prop="action" label="操作" width="300" fixed="right">
                 <template v-slot="scope">
                     <el-row :gutter="20" class="use">
-                        <el-button type="success" @click="handleDialogValue(scope.row.id)">更换图片</el-button>
+                        <el-button type="success" @click="handleImageDialogValue(scope.row)">更换图片</el-button>
                         <el-button type="primary" :icon="Edit" @click="handleDialogValue(scope.row.id)"></el-button>
                         <el-button type="danger" :icon="Delete" @click="handleDelete(scope.row.id)"></el-button>
                     </el-row>
@@ -56,6 +56,8 @@
     </el-card>
     <Dialog v-model="dialogVisible" :dialogVisible="dialogVisible" :id="id" :dialogTitle="dialogTitle"
         @initProductList="initProductList"></Dialog>
+    <ImageDialog v-model="imageDialogVisible" :imageDialogValue="imageDialogValue" @initProductList="initProductList">
+    </ImageDialog>
 </template>
   
 <script setup>
@@ -64,6 +66,8 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { ref } from "vue";
 import axios, { getServerUrl } from "@/util/axios";
 import Dialog from "./components/dialog.vue";
+
+import ImageDialog from "./components/imageDialog.vue";
 
 const queryForm = ref({
     query: "",
@@ -82,6 +86,10 @@ const dialogTitle = ref("");
 //用于是否显示dialog
 const dialogVisible = ref(false);
 
+const imageDialogValue = ref({});
+
+const imageDialogVisible = ref(false);
+
 const initProductList = async () => {
     const res = await axios.post("admin/product/list", queryForm.value);
     tableData.value = res.data.productList;
@@ -89,6 +97,12 @@ const initProductList = async () => {
 };
 
 initProductList();
+
+//更改图片
+const handleImageDialogValue = (row) => {
+    imageDialogVisible.value = true;
+    imageDialogValue.value = JSON.parse(JSON.stringify(row));
+};
 
 const handleDialogValue = (productId) => {
     if (productId) {
@@ -116,6 +130,7 @@ const handleCurrentChange = (pageNum) => {
 const typeNameFormatter = (row) => {
     return row.type.name;
 };
+
 
 const handleDelete = (id) => {
     ElMessageBox.confirm("确定要删除这条记录吗？", "系统提示", {

@@ -23,6 +23,12 @@ const routes = [
         name: '商品小类',
         component: () => import( '../views/smallType/index.vue')
       },
+      
+      {
+        path: '/product',
+        name: '商品管理',
+        component: () => import( '../views/product/index.vue')
+      },
       {
         path: '/user',
         name: '用户管理',

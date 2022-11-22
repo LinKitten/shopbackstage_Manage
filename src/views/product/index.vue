@@ -43,7 +43,7 @@
                         <el-button type="danger" :icon="Delete" @click="handleDelete(scope.row.id)"></el-button>
                     </el-row>
                     <el-row :gutter="20" class="use">
-                        <el-button type="primary" @click="handleDialogValue(scope.row.id)">幻灯设置</el-button>
+                        <el-button type="primary" @click="handleSwiperDialogValue(scope.row)">幻灯设置</el-button>
                         <el-button type="primary" :icon="Edit" @click="handleDialogValue(scope.row.id)">轮播图设置
                         </el-button>
                     </el-row>
@@ -56,8 +56,8 @@
     </el-card>
     <Dialog v-model="dialogVisible" :dialogVisible="dialogVisible" :id="id" :dialogTitle="dialogTitle"
         @initProductList="initProductList"></Dialog>
-    <ImageDialog v-model="imageDialogVisible" :imageDialogValue="imageDialogValue" @initProductList="initProductList">
-    </ImageDialog>
+    <ImageDialog v-model="imageDialogVisible" :imageDialogValue="imageDialogValue" @initProductList="initProductList"></ImageDialog>
+    <SwiperImageDialog v-model="swiperImageDialogVisible"  :imageDialogValue="imageDialogValue" @initProductList="initProductList"></SwiperImageDialog>
 </template>
   
 <script setup>
@@ -68,6 +68,8 @@ import axios, { getServerUrl } from "@/util/axios";
 import Dialog from "./components/dialog.vue";
 
 import ImageDialog from "./components/imageDialog.vue";
+import SwiperImageDialog from "./components/swiperImageDialog.vue"
+
 
 const queryForm = ref({
     query: "",
@@ -90,6 +92,9 @@ const imageDialogValue = ref({});
 
 const imageDialogVisible = ref(false);
 
+const swiperImageDialogVisible = ref(false);
+
+
 const initProductList = async () => {
     const res = await axios.post("admin/product/list", queryForm.value);
     tableData.value = res.data.productList;
@@ -103,6 +108,13 @@ const handleImageDialogValue = (row) => {
     imageDialogVisible.value = true;
     imageDialogValue.value = JSON.parse(JSON.stringify(row));
 };
+
+//更改图片
+const handleSwiperDialogValue = (row) => {
+    swiperImageDialogVisible.value = true;
+    imageDialogValue.value = JSON.parse(JSON.stringify(row));
+};
+
 
 const handleDialogValue = (productId) => {
     if (productId) {
@@ -131,7 +143,6 @@ const typeNameFormatter = (row) => {
     return row.type.name;
 };
 
-
 const handleDelete = (id) => {
     ElMessageBox.confirm("确定要删除这条记录吗？", "系统提示", {
         confirmButtonText: "确定",
@@ -158,7 +169,9 @@ const handleDelete = (id) => {
 
 //热卖选项变化便请求后端
 const hotChangeHandle = async (row) => {
-    let res = await axios.get("admin/product/updateHot/" + row.id + "/state/" + row.hot);
+    let res = await axios.get(
+        "admin/product/updateHot/" + row.id + "/state/" + row.hot
+    );
     if (res.data.code == 0) {
         ElMessage({
             type: "success",
@@ -175,21 +188,22 @@ const hotChangeHandle = async (row) => {
 };
 
 const swiperChangeHandle = async (row) => {
-    let res = await
-        axios.get("admin/product/updateSwiper/" + row.id + "/state/" + row.swiper);
+    let res = await axios.get(
+        "admin/product/updateSwiper/" + row.id + "/state/" + row.swiper
+    );
     if (res.data.code == 0) {
         ElMessage({
-            type: 'success',
-            message: '执行成功！'
+            type: "success",
+            message: "执行成功！",
         });
     } else {
         ElMessage({
-            type: 'error',
-            message: res.data.msg
+            type: "error",
+            message: res.data.msg,
         });
         initProductList();
     }
-}
+};
 </script>
   
 <style lang="scss" scoped>

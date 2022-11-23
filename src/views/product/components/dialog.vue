@@ -169,6 +169,8 @@ const formRef = ref(null);
 
 const initFormData = async (id) => {
   const res = await axios.get("admin/product/" + id);
+  bigTypeId.value = res.data.product.type.bigType.id;
+  initSmallTypeSelectList(bigTypeId.value)
   form.value = res.data.product;
 };
 
@@ -196,8 +198,8 @@ watch(
           id: "",
         },
         description: "",
-        productIntroImgs:'', //商品介绍
-        productParaImgs:'' //商品参数
+        // productIntroImgs:'', //商品介绍
+        // productParaImgs:'' //商品参数
       };
     }
   }

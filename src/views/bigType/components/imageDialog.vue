@@ -1,25 +1,8 @@
 <template>
-  <el-dialog
-    model-value="imageDialogVisible"
-    title="商品大类图片更换"
-    width="40%"
-    @close="handleClose"
-    center
-  >
-    <el-form
-      ref="formRef"
-      :model="form"
-      label-width="100px"
-      style="text-align: center"
-    >
-      <el-upload
-        :headers="headers"
-        class="avatar-uploader"
-        :action="getServerUrl() + 'admin/bigType/uploadImage'"
-        :show-file-list="false"
-        :on-success="handleAvatarSuccess"
-        :before-upload="beforeAvatarUpload"
-      >
+  <el-dialog model-value="imageDialogVisible" title="商品大类图片更换" width="40%" @close="handleClose" center>
+    <el-form ref="formRef" :model="form" label-width="100px" style="text-align: center">
+      <el-upload :headers="headers" class="avatar-uploader" :action="getServerUrl() + 'admin/bigType/uploadImage'"
+        :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
         <img v-if="imageUrl" :src="imageUrl" class="avatar" />
         <el-icon v-else class="avatar-uploader-icon">
           <Plus />
@@ -46,7 +29,7 @@ const tableDate = ref([]);
 const prop = defineProps({
   imageDialogValue: {
     type: Object,
-    default: () => {},
+    default: () => { },
     requirted: true,
   },
 });
@@ -101,19 +84,19 @@ const beforeAvatarUpload = (file) => {
   return isJPG && isLt2M;
 };
 
-const handleConfirm =async () => {
+const handleConfirm = async () => {
 
-      let result = await axios.post("admin/bigType/save", form.value);
-      let data = result.data;
-      if (data.code == 0) {
-        ElMessage.success("执行成功");
-        formRef.value.resetFields();
-        emits("initBigTypeList"); //调用父组件的方法 更新页面
-        handleClose();
-      } else {
-        ElMessage.error(data.msg);
-      }
-    
+  let result = await axios.post("admin/bigType/save", form.value);
+  let data = result.data;
+  if (data.code == 0) {
+    ElMessage.success("执行成功");
+    formRef.value.resetFields();
+    emits("initBigTypeList"); //调用父组件的方法 更新页面
+    handleClose();
+  } else {
+    ElMessage.error(data.msg);
+  }
+
 };
 </script>
 
